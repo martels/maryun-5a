@@ -116,7 +116,7 @@ int main()
    ifstream fin;
    
    // Read the maze from the file.
-   string fileName = "maze.txt";
+   string fileName = "maze1.txt";
 
    fin.open(fileName.c_str());
    if (!fin)
@@ -132,6 +132,7 @@ int main()
       while (fin && fin.peek() != 'Z')
       {
          maze m(fin);
+         m.print(4, 4, 5, 4);
       }
 
 
