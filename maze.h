@@ -73,6 +73,13 @@ void maze::getDir()
 {
    for (int i = 0; i < cols; i++)
       for (int k = 0; k < rows; k++)
+         for(int j = 0; j < 5; j++)
+         {
+            possibleDir[i][k].dir[j] = 0;
+         }
+
+   for (int i = 0; i < cols; i++)
+      for (int k = 0; k < rows; k++)
       {
          possibleDir[i][k].dir[4] = 0;
          if (value[i][k] == false)
@@ -152,7 +159,12 @@ void maze::mapMazeToGraph(graph &g)
 // Create a graph g that represents the legal moves in the maze m.
 {
    int i = 0, j = 0;
-   while (i != rows - 1 && j != cols - 1)
+   map[i][j] = 1; //unsure if indexed from one or zero
+   while (i != rows - 1)
    {
+      while(j != cols - 1)
+      {
+         
+      }
    }
 }
