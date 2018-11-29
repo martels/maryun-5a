@@ -3,6 +3,7 @@
 #include <list>
 #include <fstream>
 #include "graph.h"
+#include <cmath>
 
 using namespace std;
 
@@ -82,7 +83,7 @@ void maze::getDir()
       for (int k = 0; k < rows; k++)
       {
          possibleDir[i][k].dir[4] = 0;
-         if (value[i][k] == false)
+         if (value[i][k])
          {
             numVisitable++;
             if (value[i][k - 1] && k-1 >= 0)
@@ -158,13 +159,37 @@ bool maze::isLegal(int i, int j)
 void maze::mapMazeToGraph(graph &g)
 // Create a graph g that represents the legal moves in the maze m.
 {
+   getDir();
+   int mapnum = 1;
+   int index = 0;
    int i = 0, j = 0;
-   map[i][j] = 1; //unsure if indexed from one or zero
-   while (i != rows - 1)
-   {
-      while(j != cols - 1)
+   double ind = 0;
+   map[0][0] = mapnum;
+
+   while(i != cols && j != rows)
+   {  
+      if(possibleDir[i][j].dir[4] == 0)
       {
-         
+         mapnum++;
+         setMap(i, j, mapnum);
+
+         if(possibleDir[i][j].dir[0] == 1)
+            g.addEdge(map[i][j], map[i][j-1], 1);
+
+         if(possibleDir[i][j].dir[1] == 1)
+            g.addEdge(map[i][j], map[i][j+1], 1);
+
+         if(possibleDir[i][j].dir[2] == 1)
+            g.addEdge(map[i][j], map[i-1][j], 1);
+
+         if(possibleDir[i][j].dir[3] == 1)
+            g.addEdge(map[i][j], map[i+1][j], 1);
       }
+
+      j = index%rows;
+      ind = (double) index;
+      i = floor(index/cols);
+      index++;
    }
+   return;
 }
