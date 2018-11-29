@@ -4,7 +4,7 @@
 #include <limits.h>
 #include <list>
 #include <fstream>
-#include "maze.h"
+#include "main.h"
 
 using namespace std;
 

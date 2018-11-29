@@ -24,9 +24,11 @@ class maze
    void mapMazeToGraph(graph &g);
    void getDir();
 
- private:
+
    int rows; // number of rows in the maze
    int cols; // number of columns in the maze
+
+private:
    int numVisitable;
 
    matrix<direction> possibleDir;
