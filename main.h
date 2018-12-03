@@ -1,6 +1,6 @@
 #if (1)
 #include "maze.h"
-#include <stack.h>
+#include <stack>
 
 void dfs(graph &g, int v)
 {
