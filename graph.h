@@ -423,6 +423,7 @@ graph::graph(int n)
 // Constructor that creates a graph containing n nodes and no edges.
 // Edges and nodes are initialized by their constructors.
 {
+   node()
    for (int i = 0; i < n; i++)
       addNode();
 
