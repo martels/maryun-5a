@@ -1,34 +1,34 @@
 #ifndef MAZE_H
 #define MAZE_H
 
-#include <iostream>
-#include <limits.h>
 #include "d_except.h"
-#include <list>
-#include <fstream>
 #include "d_matrix.h"
 #include "graph.h"
+#include <fstream>
+#include <iostream>
+#include <limits.h>
+#include <list>
 
 using namespace std;
 
 class maze
 {
-   public:
-      maze(ifstream &fin);
-      void print(int,int,int,int);
-      bool isLegal(int i, int j);
+public:
+  maze(ifstream &fin);
+  void print(int, int, int, int);
+  bool isLegal(int i, int j);
+  bool isValid(int i, int j);
 
-      void setMap(int i, int j, int n);
-      int getMap(int i, int j) const;
-      void mapMazeToGraph(graph &g);
+  void setMap(int i, int j, int n);
+  int getMap(int i, int j) const;
+  void mapMazeToGraph(graph &g);
 
-      int rows; // number of rows in the maze
-      int cols; // number of columns in the maze
+  int rows; // number of rows in the maze
+  int cols; // number of columns in the maze
 
-   private:
-
-      matrix<bool> value;
-      matrix<int> map;      // Mapping from maze (i,j) values to node index values
+private:
+  matrix<bool> value;
+  matrix<int> map; // Mapping from maze (i,j) values to node index values
 };
 
 void maze::setMap(int i, int j, int n)
@@ -105,45 +105,53 @@ bool maze::isLegal(int i, int j)
   return value[i][j];
 }
 
+bool maze::isValid(int i, int j)
+// Return whether the cell is valid
+{
+  bool flag = true;
+  if (i < 0 || i > rows-1 || j < 0 || j > cols-1 || value[i][j] == 0)
+    flag = false;
+  return flag;
+}
+
 void maze::mapMazeToGraph(graph &g)
 // Create a graph g that represents the legal moves in the maze m.
 {
-   int nodeindex = 0;
-   if(g.numNodes() || g.numEdges())
-   {
-      cout << "Unable to map graph. Graph is not empty." << endl;
-      return;
-   }
-   node temp;
+  int nodeindex = 0;
+  if(g.numNodes() || g.numEdges())
+  {
+    cout << "Unable to map graph. Graph is not empty." << endl;
+    return;
+  }
+  node temp;
 
-   for(int i = 0; i < cols; i++)
-      for(int j = 0; j < rows; i++)
+  for (int i = 0; i < rows; i++)
+    for (int j = 0; j < cols; i++)
+    {
+      if (isValid(i, j))
       {
-         if(isLegal(i, j))
-         {
-            temp.setId(nodeindex);
-            g.addNode(temp);
-            setMap(i ,j ,nodeindex);
-            nodeindex++;
-         }
+        temp.setId(nodeindex);
+        g.addNode(temp);
+        setMap(i, j, nodeindex);
+        nodeindex++;
       }
+    }
+  cout << "here" << endl;
+  for (int i = 0; i < rows; i++)
+    for (int j = 0; j < cols; i++)
+    {
+      if (isValid(i - 1, j)) // up
+        g.addEdge(map[i][j], map[i - 1][j]);
 
-   for(int i = 0; i < cols; i++)
-      for(int j = 0; j < rows; i++)
-      {
-         if(isLegal(i-1, j)) //up
-            g.addEdge(map[i][j], map[i-1][j]);
+      if (isValid(i + 1, j)) // down
+        g.addEdge(map[i][j], map[i + 1][j]);
 
-         if(isLegal(i+1, j)) //down
-            g.addEdge(map[i][j], map[i+1][j]);
+      if (isValid(i, j - 1)) // left
+        g.addEdge(map[i][j], map[i][j - 1]);
 
-         if(isLegal(i, j-1)) //left
-            g.addEdge(map[i][j], map[i][j-1]);
-
-         if(isLegal(i, j+1)) //right
-            g.addEdge(map[i][j], map[i][j+1]);
-      }
+      if (isValid(i, j + 1)) // right
+        g.addEdge(map[i][j], map[i][j + 1]);
+    }
 }
-
 
 #endif

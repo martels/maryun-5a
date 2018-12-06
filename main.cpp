@@ -28,7 +28,7 @@ int main()
     while (fin && fin.peek() != 'Z')
     {
       maze m(fin);
-      solveMaze(m, g);
+      m.mapMazeToGraph(g);
     }
   }
   catch (indexRangeError &ex)
