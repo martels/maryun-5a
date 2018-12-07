@@ -109,7 +109,7 @@ bool maze::isValid(int i, int j)
 // Return whether the cell is valid
 {
   bool flag = true;
-  if (i < 0 || i > rows-1 || j < 0 || j > cols-1 || value[i][j] == 0)
+  if (i < 0 || i >= rows || j < 0 || j >= cols || value[i][j] == 0)
     flag = false;
   return flag;
 }
@@ -123,22 +123,19 @@ void maze::mapMazeToGraph(graph &g)
     cout << "Unable to map graph. Graph is not empty." << endl;
     return;
   }
-  node temp;
-
   for (int i = 0; i < rows; i++)
-    for (int j = 0; j < cols; i++)
+    for (int j = 0; j < cols; j++)
     {
       if (isValid(i, j))
       {
-        temp.setId(nodeindex);
-        g.addNode(temp);
+        g.addNode(0);
         setMap(i, j, nodeindex);
         nodeindex++;
       }
     }
-  cout << "here" << endl;
+ 
   for (int i = 0; i < rows; i++)
-    for (int j = 0; j < cols; i++)
+    for (int j = 0; j < cols; j++)
     {
       if (isValid(i - 1, j)) // up
         g.addEdge(map[i][j], map[i - 1][j]);
@@ -152,6 +149,9 @@ void maze::mapMazeToGraph(graph &g)
       if (isValid(i, j + 1)) // right
         g.addEdge(map[i][j], map[i][j + 1]);
     }
+
+    cout << "nodes = " << g.numNodes() << endl;
+    cout << "edges = " << g.numEdges() << endl;
 }
 
 #endif
