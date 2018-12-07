@@ -1,13 +1,102 @@
 #if (1)
 
 #include <stack>
+#include <vector>
+#include <queue>
 #include "maze.h"
 
 using namespace std;
 
 stack<NodeType> path;
+stack<NodeType> dfsStack;
 
-bool dfs(graph &g, NodeType v, NodeType dest)
+vector<NodeType> pvect;
+
+
+queue<NodeType> bfsq;
+
+void directions(maze &m, address add, address next)
+{
+  if(add.i >= m.rows-1 && add.j >= m.cols-1)
+  {
+    cout << "End of Path" << endl;
+    return;
+  }
+
+  if(next.i - add.i == 0 && next.j -add.j == 1)
+  {
+    cout << "Move to the right" << endl;
+  }
+
+  if(next.i - add.i == 0 && next.j -add.j == -1)
+  {
+    cout << "Move to the left" << endl;
+  }
+
+  if(next.i - add.i == 1 && next.j -add.j == 0)
+  {
+    cout << "Move down" << endl;
+  }
+
+  if(next.i - add.i == -1 && next.j -add.j == 0)
+  {
+    cout << "Move up" << endl;
+  }
+
+}
+
+
+void bfs(graph &g, NodeType dest)
+{
+  g.clearVisit();
+  bfsq.push(0);
+  g.visit(0);
+
+  NodeType v;
+
+  while(!bfsq.empty())
+  {
+    v = bfsq.front();
+
+  }
+}
+
+
+
+void dfs(graph &g, NodeType dest)
+{
+  g.clearVisit();
+  g.visit(0);
+  dfsStack.push(0);
+  int v;
+  NodeType i = 0;
+  while(!dfsStack.empty() && dfsStack.top() != dest)
+  {
+    v = dfsStack.top();
+    i = 0;
+    while (i < g.numNodes())
+    {
+      if (g.isEdge(v, i))
+      {
+        if (!g.isVisited(i))
+        {
+          g.visit(i);
+          dfsStack.push(i);
+          break;
+        }
+      }
+      i++;
+      if(i == g.numNodes())
+        dfsStack.pop();
+    }
+    if(dfsStack.top() == dest)
+      break;
+  }  
+  return;
+}
+
+
+bool dfsr(graph &g, NodeType v, NodeType dest)
 {
   g.visit(v);
   int count = 0;
@@ -19,7 +108,6 @@ bool dfs(graph &g, NodeType v, NodeType dest)
     return true;
   }
 
-
   NodeType i = 0;
   while (i < g.numNodes() && count < 3)
   {
@@ -28,10 +116,10 @@ bool dfs(graph &g, NodeType v, NodeType dest)
       if (!g.isVisited(i))
       {
         count++;
-        if(dfs(g, i, dest))
+        if (dfsr(g, i, dest))
         {
-            path.push(v);
-            return true;
+          path.push(v);
+          return true;
         }
       }
     }
@@ -40,19 +128,73 @@ bool dfs(graph &g, NodeType v, NodeType dest)
   return false;
 }
 
-void solveMaze(maze &m, graph &g)
+
+void solveMazeDFS(maze &m, graph &g)
 {
-    m.mapMazeToGraph(g);
-    int index = 0;
-    int dest = m.getMap(m.rows-1, m.cols-1);
-    g.clearVisit();
-    dfs(g, index, dest);
-    int size = path.size();
-    for(int i = 0; i < size; i++)
+  address temp1, temp2;
+  m.mapMazeToGraph(g);
+  int dest = m.getMap(m.rows - 1, m.cols - 1);
+  dfs(g, dest);
+  int size = dfsStack.size();
+  vector<NodeType> temp;
+  temp.resize(size);
+  pvect.resize(size);
+  for (int i = 0; i < size; i++)
+  {
+    pvect.at((size-1)-i) = dfsStack.top();
+    dfsStack.pop();
+  }
+
+  for (int i = 0; i < size; i++)
+  {
+    temp1 = m.getNodeMap(pvect.at(i));
+    if(i < size-1)
     {
-        cout << path.top() << endl;
-        path.pop();
+      temp2 = m.getNodeMap(pvect.at(i+1));
+      cout << "At [" << temp1.i << ", " << temp1.j << "]   ";
+      directions (m, temp1, temp2);
     }
+    
+    else
+    {
+      cout << "End" << endl;
+    }
+  }
+
+}
+
+void solveMazeDFSR(maze &m, graph &g)
+{
+  address temp1, temp2;
+  m.mapMazeToGraph(g);
+  int index = 0;
+  int dest = m.getMap(m.rows - 1, m.cols - 1);
+  g.clearVisit();
+  dfsr(g, index, dest);
+  int size = path.size();
+  pvect.resize(size);
+  for (int i = 0; i < size; i++)
+  {
+    pvect.at(i) = path.top();
+    path.pop();
+  }
+
+  for (int i = 0; i < size; i++)
+  {
+    temp1 = m.getNodeMap(pvect.at(i));
+    if(i < size-1)
+    {
+      temp2 = m.getNodeMap(pvect.at(i+1));
+      cout << "At [" << temp1.i << ", " << temp1.j << "]   ";
+      directions (m, temp1, temp2);
+    }
+    
+    else
+    {
+      cout << "End" << endl;
+    }
+  }
+
 }
 
 #endif
